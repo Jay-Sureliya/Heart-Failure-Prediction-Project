@@ -159,7 +159,7 @@ if submitted:
 
     try:
         with st.spinner("Analyzing clinical data..."):
-            response = requests.post("http://127.0.0.1:8000/predict", json=data)
+            response = requests.post("https://heartguard-api.onrender.com/predict", json=data)
 
         if response.status_code == 200:
             result = response.json()
