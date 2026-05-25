@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 
+
 # ---------- PAGE CONFIG (DARK MODE) ------------
 st.set_page_config(
     page_title="HeartGuard AI",
@@ -156,16 +157,20 @@ if submitted:
         "MaxHR": max_hr, "ExerciseAngina": exercise_angina,
         "Oldpeak": oldpeak, "ST_Slope": st_slope
     }
+    
+    # ⚠️ IMPORTANT: Verify this is your EXACT backend URL from Render
+    API_URL = "https://heartguard-api-8cxx.onrender.com/predict"
 
     try:
-        with st.spinner("Analyzing clinical data..."):
-            response = requests.post("https://heartguard-api-8cxx.onrender.com/predict", json=data)
+        # Added a helpful message about the wait time
+        with st.spinner("Analyzing clinical data... (This may take up to 60 seconds if the server is waking up)"):
+            # Added timeout=65 to give Render's free tier time to wake up
+            response = requests.post(API_URL, json=data, timeout=65)
 
         if response.status_code == 200:
             result = response.json()
             label = result["prediction"]
             prob = result["probability"]
-
 
             if label == "Heart Disease":
                 st.error("⚠️ **HIGH RISK DETECTED**")
@@ -179,6 +184,16 @@ if submitted:
                 st.info("💙 Recommendation: Maintain a healthy lifestyle, exercise regularly & get annual checkups.")
 
         else:
-            st.error("❌ Error: Could not connect to the API.")
+            st.error(f"❌ Error: API returned status code {response.status_code}. Check backend logs.")
+            
+    # Explicitly catching connection errors (wrong URL or server offline)
+    except requests.exceptions.ConnectionError:
+        st.error("🚨 Connection Error: Could not reach the backend. Please verify your FastAPI URL is correct and the server is running.")
+        
+    # Explicitly catching timeouts (server taking too long to wake up)
+    except requests.exceptions.Timeout:
+        st.error("⏱️ Timeout: The backend took too long to respond. It might be waking up from sleep mode. Please click 'Analyze Risk' again!")
+        
+    # Catch-all for any other weird errors
     except Exception as e:
-        st.error(f"🚨 Backend Error: {e}")
+        st.error(f"🚨 Unexpected System Error: {e}")
