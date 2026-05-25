@@ -17,7 +17,7 @@ Please fill out the form below.
 st.divider()
 
 # URL of your FastAPI backend
-API_URL = "http://127.0.0.1:8000/predict"
+API_URL = "https://heart-disease-api-x3wr.onrender.com/predict"
 
 # 3. Use a form to prevent automatic page reloads on every input change
 with st.form("patient_form"):
