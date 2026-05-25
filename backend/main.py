@@ -6,7 +6,7 @@ import pandas as pd
 app = FastAPI()
 
 # Load the single pipeline file
-model = joblib.load('heart_disease_pipeline.pkl')
+model = joblib.load('backend\heart_disease_pipeline.pkl')
 
 # Define the data format (matches the CSV columns)
 class PatientData(BaseModel):
