@@ -158,7 +158,6 @@ if submitted:
         "Oldpeak": oldpeak, "ST_Slope": st_slope
     }
     
-    # ⚠️ IMPORTANT: Verify this is your EXACT backend URL from Render
     API_URL = "https://heartguard-api-8cxx.onrender.com/predict"
 
     try:
